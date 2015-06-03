@@ -63,12 +63,11 @@
 
 	$().ready(function() {
 		$("#b-cancel").click(function() {
-      var location = decodeURIComponent(getURLVariable('return_to')) || "pebblejs://close#";
-      document.location = location;
+			document.location = "pebblejs://close";
 		});
 		$("#b-submit").click(function() {
-      var location = (decodeURIComponent(getURLVariable('return_to')) || "pebblejs://close#") + encodeURIComponent(JSON.stringify(saveOptions()));
-      document.location = location;
+			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+			document.location = location;
 		});
 	});
 
