@@ -22,9 +22,9 @@
 			<fieldset data-role="controlgroup">
 			Background sahapes:
 			<select id="bgshapes">
-			<option value="1" selected="selected">Dark gray</option>
-			<option value="2">Light gray</option>
-			<option value="3">Hidden</option>
+			<option value=1 selected="selected">Dark gray</option>
+			<option value=2>Light gray</option>
+			<option value=3>Hidden</option>
 			</select>
 			</fieldset>
 		</div>
@@ -43,7 +43,7 @@
 		if (window.location.search) {
 			var settings = decodeURIComponent(window.location.search).replace('?settings=','');
 			if (settings == "null") {
-				settings = '{"bgshapes":"03"}';
+				settings = '{"bgshapes":1}';
 			}
 			if (settings) {
 				var json = $.parseJSON(settings);
