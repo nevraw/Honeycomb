@@ -41,7 +41,7 @@
 <script>
 	function updateSettings() {
 		if (window.location.search) {
-			var settings = decodeURIComponent(window.location.search).replace('?settings=','');
+			var settings = decodeURIComponent(window.location.search).replace('?HCsettings=','');
 			if (settings == "null") {
 				settings = '{"background":1}';
 			}
