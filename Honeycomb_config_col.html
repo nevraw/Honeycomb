@@ -42,7 +42,7 @@
 	function updateSettings() {
 		if (window.location.search) {
 			try {
-			    settings = JSON.parse(localStorage.getItem("HoneycombSettingsColor"));
+			    settings = JSON.parse(localStorage.getItem("HCSettingsCol"));
 			}
 			catch(err) {
 			    settings = null;
@@ -72,7 +72,7 @@
 		});
 		$("#b-submit").click(function() {
 
-			localStorage.setItem("HoneycombSettingsColor", JSON.stringify(settings));
+			localStorage.setItem("HCSettingsCol", JSON.stringify(settings));
         
 			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
 			document.location = location;
