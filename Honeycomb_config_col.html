@@ -41,12 +41,8 @@
 <script>
 	function updateSettings() {
 		if (window.location.search) {
-			try {
-			    settings = JSON.parse(localStorage.getItem("HCSettings_Col"));
-			}
-			catch(err) {
-			    settings = null;
-			}
+			var settings = decodeURIComponent(window.location.search).replace('?settings=','');
+
 			if (settings == "null") {
 				settings = '{"background":1}';
 			}
