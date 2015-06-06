@@ -72,7 +72,6 @@
 		});
 		$("#b-submit").click(function() {
 
-			localStorage.setItem("HCSettings_Col", JSON.stringify(settings));
         
 			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
 			document.location = location;
