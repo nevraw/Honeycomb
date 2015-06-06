@@ -17,20 +17,57 @@
 		<h1>Honeycomb Settings</h1>
 	</div>
 	<div data-role="content">
-    <p>There are no configurable options for black&white Pebble screens as yet</p>
+
+		<div data-role="fieldcontain">
+			<fieldset data-role="controlgroup">
+			Background color:
+			<select id="background">
+			<option value="1" selected="selected">Black</option>
+			<option value="2">White</option>
+			</select>
+			</fieldset>
+		</div>
 
 		<div class="ui-body ui-body-b">
 			<fieldset class="ui-grid-a">
-			<div class="ui-block-a"><button type="submit" data-theme="d" id="b-cancel">Return</button></div>
+			<div class="ui-block-a"><button type="submit" data-theme="d" id="b-cancel">Cancel</button></div>
+			<div class="ui-block-b"><button type="submit" data-theme="a" id="b-submit">Submit</button></div>
 			</fieldset>
 		</div>
 	</div>
 </div>
 
 <script>
+	function updateSettings() {
+		if (window.location.search) {
+			var settings = decodeURIComponent(window.location.search).replace('?settings=','');
+
+			if (settings == "null") {
+				settings = '{"background":1}';
+			}
+			if (settings) {
+				var json = $.parseJSON(settings);
+				if (json.background) {
+					$('#background').val(json.background).selectmenu('refresh');
+				}
+      }
+    }
+  }
+
+	function saveOptions() {
+		var options = {
+			'background': $("#background").val(),
+		}
+		return options;
+	}
+
 	$().ready(function() {
 		$("#b-cancel").click(function() {
 			document.location = "pebblejs://close";
+		});
+		$("#b-submit").click(function() {
+			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+			document.location = location;
 		});
 	});
 
