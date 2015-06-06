@@ -41,7 +41,12 @@
 <script>
 	function updateSettings() {
 		if (window.location.search) {
-			var settings = decodeURIComponent(window.location.search).replace('?settings=','');
+			try {
+			    settings = JSON.parse(localStorage.getItem("HoneycombSettingsColor"));
+			}
+			catch(err) {
+			    settings = null;
+			}
 			if (settings == "null") {
 				settings = '{"background":1}';
 			}
@@ -66,6 +71,9 @@
 			document.location = "pebblejs://close";
 		});
 		$("#b-submit").click(function() {
+
+			localStorage.setItem("HoneycombSettingsColor", JSON.stringify(settings));
+        
 			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
 			document.location = location;
 		});
