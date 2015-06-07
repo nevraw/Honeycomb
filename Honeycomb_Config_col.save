@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -39,9 +40,20 @@
 </div>
 
 <script>
+	function getParam(key) {
+		var params = window.location.hash;
+		var val;
+		params.replace(/(?:^|[#&])([a-z]+)=([^&]+)/ig, function(_, k, v) {
+			if (key === k) {
+				val = decodeURIComponent(v);
+			}
+		});
+		return val;
+	}
+	
 	function updateSettings() {
 		if (window.location.search) {
-			var settings = decodeURIComponent(window.location.search).replace('?settings=','');
+			var settings = JSON.parse(getParam('Settings'));
 
 			if (settings == "null") {
 				settings = '{"background":1}';
