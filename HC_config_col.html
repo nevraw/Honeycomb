@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Basic Page Needs
+  ================================================== -->
+<meta charset="utf-8">
+<title>Configure Honeycomb</title>
+<meta name="description" content="Configuration page for Honeycomb, a Pebble watchface">
+<meta name="author" content="Nev Rawlins">
+<!-- Mobile Specific Metas
+  ================================================== -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+</head>
+<body>
+
+<!-- Primary Page Layout
+	================================================== -->
+<div class="container">
+	<header>
+		<h1>Configure Honeycomb</h1>
+	</header>
+
+	<div id="info" class="bg-info" >
+		<p>Select option for Honeycomb appearance</p>
+                <p></p>
+		</div>
+
+	<form id="config" role="form" class="input-lg" style="padding:10px">
+		<fieldset style="padding:6px">
+			<legend>Background color</legend>
+			<div class="radio">
+			<label>
+				<input type="radio" name="background" value="0">Black
+				<input type="radio" name="background" value="1" checked>Blue
+				<input type="radio" name="background" value="2">Red
+			</label>
+		</div>
+  		</fieldset>
+                <br><br>     
+
+		<fieldset style="padding:6px">
+			<a href="pebblejs://close" class="btn btn-lg btn-default" role="button">Cancel</a>
+				<button type="button" class="btn btn-lg btn-primary" id="b-submit">Save</button>
+		</fieldset>
+	</form>
+
+</div><!-- container -->
+
+<!-- End Document
+================================================== -->
+
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script>
+		function saveOptions() {
+			var params = {};
+			$('#config').serializeArray().forEach(function(pair) {
+				params[pair.name] = pair.value;
+			});
+
+			var options = {
+				background:		params.background === 'on'
+			}
+			return options;
+		}
+
+		function applyOptions() {
+			var $form	= $('#config');
+			var opts	= JSON.parse(getParam('options'));
+			if (opts && opts.background) {
+				$form.find('[name="background"]').prop('checked', true);
+			}
+		}
+
+		function getParam(key) {
+			var params = window.location.hash;
+			var val;
+			params.replace(/(?:^|[#&])([a-z]+)=([^&]+)/ig, function(_, k, v) {
+				if (key === k) {
+					val = decodeURIComponent(v);
+				}
+			});
+			return val;
+		}
+
+		$("#b-submit").click(function() {
+			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+			document.location = location;
+		});
+
+		applyOptions();
+   </script>
+
+</body>
+</html>
