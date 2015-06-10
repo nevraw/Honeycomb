@@ -1,79 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Basic Page Needs
+  ================================================== -->
+<meta charset="utf-8">
+<title>Configure Honeycomb</title>
+<meta name="description" content="Configuration page for Honeycomb, a Pebble watchface">
+<meta name="author" content="Nev Rawlins">
+<!-- Mobile Specific Metas
+  ================================================== -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-<head>
-	<title>Configurable</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
-	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 </head>
-
 <body>
 
-<div data-role="page" id="main">
-	<div data-role="header" class="jqm-header">
-		<h1>Honeycomb Settings</h1>
-	</div>
-	<div data-role="content">
+<!-- Primary Page Layout
+	================================================== -->
+<div class="container">
+	<header>
+		<h1>Configure Honeycomb</h1>
+	</header>
 
-		<div data-role="fieldcontain">
-			<fieldset data-role="controlgroup">
-				Background color:
-				<select id="background">
-					<option value="1">Black</option>
-					<option value="2" selected="selected">Blue</option>
-					<option value="3">Red</option>
-				</select>
-			</fieldset>
+	<div id="info" class="bg-info" >
+		<p>Select option for Honeycomb appearance</p>
+                <p></p>
 		</div>
 
-		<div class="ui-body ui-body-b">
-			<fieldset class="ui-grid-a">
-			<div class="ui-block-a"><button type="submit" data-theme="d" id="b-cancel">Cancel</button></div>
-			<div class="ui-block-b"><button type="submit" data-theme="a" id="b-submit">Submit</button></div>
-			</fieldset>
+	<form id="config" role="form" class="input-lg" style="padding:10px">
+		<fieldset style="padding:6px">
+			<legend>Background color</legend>
+			<div class="radio">
+			<label>
+				<input type="radio" name="background" value="1">Black
+				<input type="radio" name="background" value="2" checked>Blue
+				<input type="radio" name="background" value="3">Red
+			</label>
 		</div>
-	</div>
-</div>
+  		</fieldset>
+                <br><br>     
 
-<script>
-	function updateSettings() {
-		if (window.location.search) {
-			var settings = decodeURIComponent(window.location.search).replace('?settings=','');
+		<fieldset style="padding:6px">
+			<a href="pebblejs://close" class="btn btn-lg btn-default" role="button">Cancel</a>
+				<button type="button" class="btn btn-lg btn-primary" id="b-submit">Save</button>
+		</fieldset>
+	</form>
 
-			if (settings == "null") {
-				settings = '{"background":1}';
+</div><!-- container -->
+
+<!-- End Document
+================================================== -->
+
+	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script>
+		var LATEST = "2.0";
+
+		function getCheckedValue(radioObj) {
+			console.log('in getCheckedValue() (HTML)');
+			if(!radioObj)
+				return "";
+			var radioLength = radioObj.length;
+			if(radioLength == undefined)
+				if(radioObj.checked)
+					return radioObj.value;
+				else
+					return "";
+			for(var i = 0; i < radioLength; i++) {
+				if(radioObj[i].checked) {
+					return radioObj[i].value;
+				}
 			}
-			if (settings) {
-				var json = $.parseJSON(settings);
-				if (json.background) {
-					$('#background').val(json.background).selectmenu('refresh');
+			return "";
+		}
+
+		function setCheckedValue(radioObj, newValue) {
+			var radioLength = radioObj.length;
+			if(radioLength == undefined) {
+				console.log('radioLength == undefined');
+				radioObj.checked = (radioObj.value == newValue.toString());
+				return;
+			}
+			for(var i = 0; i < radioLength; i++) {
+				radioObj[i].checked = false;
+				if(radioObj[i].value == newValue.toString()) {
+					radioObj[i].checked = true;
 				}
 			}
 		}
-	}
 
-	function saveOptions() {
-		var options = {
-			'background': $("#background").val(),
+		function saveOptions() {
+			var params = {};
+			$('#config').serializeArray().forEach(function(pair) {
+				params[pair.name] = pair.value;
+			});
+
+			var options = {
+				background:		params.background
+			}
+			return options;
 		}
-		return options;
-	}
 
-	$().ready(function() {
-		$("#b-cancel").click(function() {
-			document.location = "pebblejs://close";
-		});
+		function applyOptions() {
+			var $form	= $('#config');
+			var opts	= JSON.parse(getParam('options'));
+			if (opts && opts.background) {
+				setCheckedValue(document.forms['config'].elements['background'], opts.background);
+//				$form.find('[name="background"]').prop('checked', true);
+			}
+		}
+
+		function getParam(key) {
+			var params = window.location.hash;
+			var val;
+			params.replace(/(?:^|[#&])([a-z]+)=([^&]+)/ig, function(_, k, v) {
+				if (key === k) {
+					val = decodeURIComponent(v);
+				}
+			});
+			return val;
+		}
+ 
+		function parseVersion(verStr) {
+			var parts = verStr.split('.');
+			return parts.reduce(function(sum, part) {
+				return (sum * 1000) + parseInt(part, 10);
+			}, 0);
+		}
+
+		function getQueryParam(variable, default_) {
+		    var query = location.search.substring(1);
+		    var vars = query.split('&');
+		    for (var i = 0; i < vars.length; i++) {
+		        var pair = vars[i].split('=');
+		        if (pair[0] == variable)
+		            return decodeURIComponent(pair[1]);
+		    }
+		    return default_ || false;
+		}
+		
 		$("#b-submit").click(function() {
-			var location = "pebblejs://close#" + encodeURIComponent(JSON.stringify(saveOptions()));
+			console.log('in #b-submit (HTML)');
+			var location = getQueryParam('return_to', 'pebblejs://close#');
+			document.location = location + encodeURIComponent(JSON.stringify(saveOptions()));
+		})
+	
+		$('#xbtnCancel').click(function () {
+			console.log('in #xbtnCancel (HTML)');
+			var location = getQueryParam('return_to', 'pebblejs://close#');
 			document.location = location;
-		});
-	});
+		})
 
-	$('#main').bind('pageinit', updateSettings);
-</script>
+		var version = getParam('v');
+		if (!version || (parseVersion(version) < parseVersion(LATEST))) {
+			$('#update-available').removeClass('hidden');
+		}
+		else {
+			$('#up-to-date').removeClass('hidden');
+		}
+
+		applyOptions();
+   </script>
 
 </body>
 </html>
